@@ -5,3 +5,25 @@
 .navbar-collapse.collapse {
   padding-bottom: 1px;
 }
+
+header {
+  color: white;
+  text-align: center;
+  padding-top: 50px;
+}
+
+main {
+  padding-top: 50px;
+}
+
+.mainStage {
+  outline: 5px solid grey;
+}
+
+.threeFour {
+  outline: 19px solid red;
+}
+
+.aThird {
+  outline: 11px solid green;
+}

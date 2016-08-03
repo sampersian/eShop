@@ -30,12 +30,15 @@
             <div class="form-group">
               <select class="form-control" id="select">
                 <option>Everything</option>
+                <option>Brand</option>
+                <option>Kind</option>
+                <option>SKU</option>
               </select>
             </div>
             <div class="form-group">
-              <input type="text" class="form-control" placeholder="Search">
+              <input type="text" class="form-control myInput" placeholder="Search">
             </div>
-            <button type="submit" class="btn btn-primary">Submit</button>
+            <button type="submit" class="btn btn-primary searchButton">Submit</button>
           </form>
           <ul class="nav navbar-nav navbar-right">
             <li><a href="#">History</a></li>
@@ -43,28 +46,21 @@
         </div>
       </div>
     </nav>
-    <header>
+    <header class='myHeader'>
       <h1 class="pageTitle">Shop Title</h1>
     </header>
     <main>
       <div class="container mainStage">
+
         <div class="row">
-          <div class="col-lg-3">
-            Here
+
+          <div class="col-lg-3 col-md-3 col-sm-4 col-xs-6">
+            <ul class="nav nav-pills nav-stacked catSelector">
+            </ul>
           </div>
-          <div class="col-lg-9 container threeFour">
-            <div class="row">
-              <div class="col-md-4 aThird">
-                1
-              </div>
-              <div class="col-md-4 aThird">
-                <!-- Content -->
-                2
-              </div>
-              <div class="col-md-4 aThird">
-                3
-              </div>
-            </div>
+
+          <div class="col-lg-9 col-md-9 col-sm-8 col-xs-6 container threeFour">
+
           </div>
         </div>
       </div>

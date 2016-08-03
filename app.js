@@ -1,5 +1,5 @@
 products = {};
-$.get("https://galvanize-cors-proxy.herokuapp.com/https://jsonhost-d6ae1.firebaseapp.com/inventory.json")
+$.get("https://galvanize-cors-proxy.herokuapp.com/https://jsonhost-d6ae1.firebaseapp.com/hockeystore.json")
   .then((data) => {
     products = data;
     setUpInventory();
@@ -10,9 +10,12 @@ $.get("https://galvanize-cors-proxy.herokuapp.com/https://jsonhost-d6ae1.firebas
     })
     $('.navCat').click(function() {
       $(".threeFour").empty();
-      showCategory(getRidOfSpaces(this.innerHTML));
+      showCategory(getRidOfSpaces($(this).text()));
     })
-    $('.searchButton').click(function() {
+    $('.navbar-form').submit(function(event) {
+      event.preventDefault();
+      $(".jumbotron").hide();
+      $("main").show();
       searchForSomething($(".myInput").val());
       $(".myInput").val('');
     })
@@ -25,6 +28,7 @@ $.get("https://galvanize-cors-proxy.herokuapp.com/https://jsonhost-d6ae1.firebas
   })
 
 categories = []; //category names
+categoryImages = {};
 brands = []; //brand names
 kinds = [];//different product kinds (maybe rename this because its confusing as fuck)
 inventoryBySKU = {}; //product inventory where keys are product SKU's
@@ -73,6 +77,7 @@ function setUpInventory() {
 
       if (inventoryByCategory[p.Category] === undefined) {
         categories.push(p.Category);
+        categoryImages[p.Category] = p.ImgUrl;
         inventoryByCategory[p.Category] = [];
       };
       inventoryByCategory[p.Category].push(p);
@@ -93,22 +98,22 @@ function setUpInventory() {
 
 function makeItemObject(sku) {
     item = inventoryBySKU[sku];
-    itemObject = $('<div class="card col-lg-4 col-md-6 col-sm-8 col-xs-12">\
+    itemObject = $('<div class="card col-lg-3 col-md-4 col-sm-6 col-xs-12">\
       <div class="myCard">\
         <div class="cardPhotoHolder">\
-          <img class="card-img-top cardPhoto" src="images/'+item.SKU+'.jpg" alt="Card image cap" width="200px">\
+          <img class="card-img-top cardPhoto" src="'+item.ImgUrl+'" alt="Card image cap" width="200px">\
         </div>\
         <div class="card-block">\
           <div class="row">\
             <div class="myLeftLogo">\
-              <img class="cardLogo" src="logos/'+item.Brand+'.png" alt="Card image cap" height="40px" width="40px">\
+              <img class="cardLogo" src="'+item.ImgUrl+'" alt="Card image cap" height="40px" width="40px">\
             </div>\
             <div class="myRightTitle">\
-              <h4 class="card-title itemTitle">'+item.Type+' '+item.Kind+'</h4>\
+              <h6 class="card-title itemTitle">'+item.Type+' '+item.Kind+'</h6>\
             </div>\
           </div>\
-          <p class="card-text">$'+item.Price+'.99</p>\
-          <input type="number" class="form-control" value="1">\
+          <p class="card-text">'+item.Price+'</p>\
+          <input type="number" class="form-control" id="nToAddof'+item.SKU+'" value="1">\
           <button type="button" class="btn btn-primary form-control itemAdder" onclick="addItemToCart('+item.SKU+');">Add to Cart</button>\
         </div>\
       </div>\
@@ -116,17 +121,23 @@ function makeItemObject(sku) {
 
     return itemObject;
 }
-
+//
+// function addNavCategories() {
+//   for (let c in categories.sort()) {
+//     let newobj = $('<li class="nav-item navCat">'+getRidOfUnderscores(categories[c])+'</li>');
+//      $('.catSelector').append(newobj);
+//   }
+// }
 function addNavCategories() {
   for (let c in categories.sort()) {
-    let newobj = $('<li class="nav-item navCat">'+getRidOfUnderscores(categories[c])+'</li>');
-     $('.catSelector').append(newobj);
+    let newobj = $('<li class="nav-item navCat"><img src="'+categoryImages[categories[c]]+'" class="catImage">'+getRidOfUnderscores(categories[c])+'</li>');
+    $('.catSelector').append(newobj);
   }
 }
 
-
 function showCategory(cat) {
   let theWholeCategory = inventoryByCategory[cat];
+  console.log(theWholeCategory)
   for (let c of theWholeCategory) {
     let obj = makeItemObject(c.SKU);
     $(".threeFour").append(obj);
@@ -233,5 +244,7 @@ function searchForSomething(sVal) {
 }
 
 function addItemToCart(sku) {
-
+  let numberToAdd = $("#nToAddof"+sku).val();
+  console.log("Adding '"+numberToAdd+"' of '"+sku+"' to the cart.");
+  console.log(inventoryBySKU[sku]);
 }

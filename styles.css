@@ -29,8 +29,26 @@ header {
     margin: 5px;
 }
 
+.jumbotron {
+  margin: 80px;
+  padding: 30px;
+  text-align: center;
+}
+
+.jumbotron .entranceOptions {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.jumbotron .entranceOptions .entranceOption {
+  width: 50%;
+  display: inline-block;
+  text-align: center;
+}
+
 main {
-  padding-top: 50px;
+  display: none;
+  padding-top: 20px;
 }
 
 .mainStage {
@@ -54,12 +72,16 @@ main {
 
 .cardPhotoHolder {
   text-align: center;
+  height: 135px;
+  margin-bottom: 10px;
 }
 
 .cardPhotoHolder .cardPhoto {
   width: 200px;
   margin-bottom: 10px;
   min-width: 200px;
+  margin: auto;
+  max-height: 135px;
 }
 
 .myLeftLogo {

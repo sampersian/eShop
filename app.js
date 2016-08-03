@@ -4,12 +4,22 @@ $.get("https://galvanize-cors-proxy.herokuapp.com/https://jsonhost-d6ae1.firebas
     products = data;
     setUpInventory();
     addNavCategories();
+    $("#enterStore").click(function() {
+      $(".jumbotron").hide();
+      $("main").show();
+    })
     $('.navCat').click(function() {
       $(".threeFour").empty();
       showCategory(getRidOfSpaces(this.innerHTML));
     })
     $('.searchButton').click(function() {
-      searchForSomething();
+      searchForSomething($(".myInput").val());
+      $(".myInput").val('');
+    })
+    $('.searchButton2').click(function() {
+      $(".jumbotron").hide();
+      $("main").show();
+      searchForSomething($(".myInput2").val());
       $(".myInput").val('');
     })
   })
@@ -52,7 +62,12 @@ function setUpInventory() {
     for (p of products) {
       p.Category = getRidOfSpaces(p.Category); //gets rid of spaces in category names and replaces them with _'s
       p.Brand = getRidOfSpaces(p.Brand);
-      p.Kind = getRidOfSpaces(p.Kind);
+      if (p.Kind === undefined) {
+        p.Kind = "";
+      } else {
+        p.Kind = getRidOfSpaces(p.Kind);
+      }
+
 
       inventoryBySKU[p.SKU] = p; //puts the product into inventory w/ the SKU as a key
 
@@ -81,7 +96,7 @@ function makeItemObject(sku) {
     itemObject = $('<div class="card col-lg-4 col-md-6 col-sm-8 col-xs-12">\
       <div class="myCard">\
         <div class="cardPhotoHolder">\
-          <img class="card-img-top cardPhoto" src="logos/'+item.Brand+'.png" alt="Card image cap" height="200px" width="200px">\
+          <img class="card-img-top cardPhoto" src="images/'+item.SKU+'.jpg" alt="Card image cap" width="200px">\
         </div>\
         <div class="card-block">\
           <div class="row">\
@@ -94,10 +109,11 @@ function makeItemObject(sku) {
           </div>\
           <p class="card-text">$'+item.Price+'.99</p>\
           <input type="number" class="form-control" value="1">\
-          <button type="button" class="btn btn-primary form-control">Add to Cart</button>\
+          <button type="button" class="btn btn-primary form-control itemAdder" onclick="addItemToCart('+item.SKU+');">Add to Cart</button>\
         </div>\
       </div>\
     </div>');
+
     return itemObject;
 }
 
@@ -144,9 +160,10 @@ function showSKU(sku) {
   $(".threeFour").append(obj);
 }
 
-function searchForSomething() {
+function searchForSomething(sVal) {
+  $(".threeFour").empty();
   var searchMethod = $("#select").val();
-  var searchValue = $(".myInput").val();
+  var searchValue = sVal;
   console.log("searching for the term '"+searchValue+"'");
   console.log("searching by "+searchMethod)
   switch (searchMethod) {
@@ -212,5 +229,9 @@ function searchForSomething() {
       break;
     default:
       console.error("Search error. Invalid Method.")
-  }
+    }
+}
+
+function addItemToCart(sku) {
+
 }

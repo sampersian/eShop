@@ -1,9 +1,11 @@
 products = {};
+cart = {};
 $.get("https://galvanize-cors-proxy.herokuapp.com/https://jsonhost-d6ae1.firebaseapp.com/hockeystore.json")
   .then((data) => {
     products = data;
     setUpInventory();
     addNavCategories();
+    $(".jumbotron").show();
     $("#enterStore").click(function() {
       $(".jumbotron").hide();
       $("main").show();
@@ -24,6 +26,16 @@ $.get("https://galvanize-cors-proxy.herokuapp.com/https://jsonhost-d6ae1.firebas
       $("main").show();
       searchForSomething($(".myInput2").val());
       $(".myInput").val('');
+    })
+    $('.cartLink').click(function() {
+      $(".jumbotron").hide();
+      $("main").show();
+      console.log("trying")
+      showCart();
+    })
+    $('.goHome').click(function() {
+      $("main").hide();
+      $(".jumbotron").show();
     })
   })
 
@@ -71,8 +83,13 @@ function setUpInventory() {
       } else {
         p.Kind = getRidOfSpaces(p.Kind);
       }
-
-
+      let newT = [];
+      for (let j of p.Type.split(" ")) {
+        if (j !== p.Brand) {
+          newT.push(j);
+        }
+      }
+      p.Type = newT.join(" ");
       inventoryBySKU[p.SKU] = p; //puts the product into inventory w/ the SKU as a key
 
       if (inventoryByCategory[p.Category] === undefined) {
@@ -87,6 +104,7 @@ function setUpInventory() {
         inventoryByBrand[p.Brand] = [];
       };
       inventoryByBrand[p.Brand].push(p);
+
 
       if (inventoryByKind[p.Kind] === undefined) {
         kinds.push(p.Kind);
@@ -103,23 +121,46 @@ function makeItemObject(sku) {
         <div class="cardPhotoHolder">\
           <img class="card-img-top cardPhoto" src="'+item.ImgUrl+'" alt="Card image cap" width="200px">\
         </div>\
-        <div class="card-block">\
+        <div class="card-block cardBlock" id="cardBlock'+item.SKU+'">\
           <div class="row">\
             <div class="myLeftLogo">\
               <img class="cardLogo" src="'+item.ImgUrl+'" alt="Card image cap" height="40px" width="40px">\
             </div>\
             <div class="myRightTitle">\
-              <h6 class="card-title itemTitle">'+item.Type+' '+item.Kind+'</h6>\
+              <h6 class="card-title itemTitle">'+item.Type+' '+getRidOfUnderscores(item.Kind)+'</h6>\
             </div>\
           </div>\
           <p class="card-text">'+item.Price+'</p>\
-          <input type="number" class="form-control" id="nToAddof'+item.SKU+'" value="1">\
-          <button type="button" class="btn btn-primary form-control itemAdder" onclick="addItemToCart('+item.SKU+');">Add to Cart</button>\
+          <div class="adderSection">\
+            <input type="number" class="form-control nToAdd" id="nToAddof'+item.SKU+'" value="1">\
+            <button type="button" class="btn btn-primary form-control itemAdder" id="itemAddBtn'+item.SKU+'" onclick="confirmAdd('+item.SKU+')">Add to Cart</button>\
+          </div>\
         </div>\
       </div>\
     </div>');
-
     return itemObject;
+}
+
+var abc;
+function replaceItemGuts(sku) {
+    let item = inventoryBySKU[sku];
+    console.log(sku, item);
+    itemObject = $('<div class="row">\
+            <div class="myLeftLogo">\
+              <img class="cardLogo" src="'+item.ImgUrl+'" alt="Card image cap" height="40px" width="40px">\
+            </div>\
+            <div class="myRightTitle">\
+              <h6 class="card-title itemTitle">'+item.Type+' '+getRidOfUnderscores(item.Kind)+'</h6>\
+            </div>\
+          </div>\
+          <p class="card-text">'+item.Price+'</p>\
+          <div class="adderSection">\
+            <input type="number" class="form-control nToAdd" id="nToAddof'+item.SKU+'" value="1">\
+            <button type="button" class="btn btn-primary form-control itemAdder" id="itemAddBtn'+item.SKU+'" onclick="confirmAdd('+item.SKU+')">Add to Cart</button>\
+          </div>\
+          ');
+    console.log("#cardBlock"+sku)
+    $("#cardBlock"+sku).append(itemObject);
 }
 //
 // function addNavCategories() {
@@ -128,6 +169,8 @@ function makeItemObject(sku) {
 //      $('.catSelector').append(newobj);
 //   }
 // }
+
+
 function addNavCategories() {
   for (let c in categories.sort()) {
     let newobj = $('<li class="nav-item navCat"><img src="'+categoryImages[categories[c]]+'" class="catImage">'+getRidOfUnderscores(categories[c])+'</li>');
@@ -137,7 +180,6 @@ function addNavCategories() {
 
 function showCategory(cat) {
   let theWholeCategory = inventoryByCategory[cat];
-  console.log(theWholeCategory)
   for (let c of theWholeCategory) {
     let obj = makeItemObject(c.SKU);
     $(".threeFour").append(obj);
@@ -243,8 +285,141 @@ function searchForSomething(sVal) {
     }
 }
 
-function addItemToCart(sku) {
-  let numberToAdd = $("#nToAddof"+sku).val();
-  console.log("Adding '"+numberToAdd+"' of '"+sku+"' to the cart.");
+function addItemToCart(sku, n) {
+  console.log("Adding '"+n+"' of '"+sku+"' to the cart.");
   console.log(inventoryBySKU[sku]);
+  if (cart[sku] === undefined) {
+    cart[sku] = n;
+  } else {
+    cart[sku] += n;
+  }
+  updateCartCount();
+  $(".addConfirmBox").remove();
+  replaceItemGuts(sku);
+}
+
+function confirmAdd(sku) {
+  var numberToAdd = $("#nToAddof"+sku).val();
+  if (numberToAdd <= 0) {
+    alert("Cannot add negative quantities.")
+    $("#nToAddof"+sku).val(1);
+    return false;
+  }
+  tempConfirm = $('<div class="addConfirmBox">\
+    <div class="modal-dialog modal-sm myModal" role="document">\
+      <div class="">\
+        Add '+numberToAdd+' to your cart?\
+      </div><br>\
+      <button type="button" class="btn btn-danger" onclick="cancelAdd('+sku+', '+numberToAdd+');">No</button>\
+      <button type="button" class="btn btn-success" onclick="addItemToCart('+sku+', '+numberToAdd+')">Yes</button>\
+    </div>\
+  </div>');
+  $("#cardBlock"+sku).empty();
+  $("#cardBlock"+sku).append(tempConfirm);
+}
+
+function cancelAdd(sku, n) {
+  console.log("Not adding '"+n+"' of '"+sku+"' to the cart.");
+  $(".addConfirmBox").remove();
+  replaceItemGuts(sku);
+}
+
+
+function makeCart() {
+  let c = $('<div class="myCart">\
+      <div class="cartRow cartTitles">\
+        <div class="cartRowLogo">\
+          Picture\
+        </div>\
+        <span class="myCenterTitle cartRowTitle">Item</span>\
+        <span class="cartRowUnit">Unit</span>\
+        <span class="cartRowQuantity">Qty</span>\
+        <span class="myRightPrice cartRowPrice">Price</span>\
+      <div>\
+    </div>\
+  ');
+  for (item in cart) {
+    let i = makeItemInCart(item,cart[item])
+    c.append(i);
+  }
+  let t = makeCartTotals();
+  c.append(t);
+  let s = $('<div class="cartRow">\
+      <input type="button" value="submit" onclick="processOrder()">\
+    </div>\
+    ');
+  c.append(s);
+  return c;
+}
+
+function processOrder() {
+  alert("Your order has been submitted.");
+  cart = {};
+  updateCartCount();
+  $('.threeFour').empty();
+}
+
+function makeItemInCart(sku, n) {
+  let item = inventoryBySKU[sku];
+  let itemSub = ((Number(item.Price.replace("$","")))*n).toFixed(2);
+  let i = $('<div class="cartRow anItemInCart">\
+      <div class="cartRowLogo">\
+        <img class="cardLogo" src="'+item.ImgUrl+'" alt="Card image cap" height="40px" width="40px">\
+      </div>\
+      <span class="myCenterTitle cartRowTitle">'+getRidOfUnderscores(item.Brand)+' '+item.Type+' '+getRidOfUnderscores(item.Kind)+'</span>\
+      <span class="cartRowUnit">'+item.Price+'</span>\
+      <span class="cartRowQuantity">\
+        <button value="-" class="btn-danger oneLessButton" onclick=oneLess('+sku+')>-</button>\
+        '+n+'\
+        <button value="-" class="btn-success oneMoreButton" onclick=oneMore('+sku+')>+</button>\
+      </span>\
+      <span class="myRightPrice cartRowPrice">$'+itemSub+'</span>\
+    </div>\
+  ');
+  return i;
+}
+
+function oneLess(sku) {
+  console.log("Removing one of ",sku," from the cart.")
+}
+
+function oneMore(sku) {
+  console.log("Adding one of ",sku," to the cart.")
+}
+
+function makeCartTotals() {
+  let tempt = 0;
+  for (item in cart) {
+    let iinfo = inventoryBySKU[item];
+    let icount = cart[item];
+    let iprice = Number(iinfo.Price.replace("$",""));
+    let isub = iprice*icount;
+    tempt += isub;
+  }
+  let r = $('<div class="cartRow cartTotals">\
+        <span class="myCenterTitle cartRowTotal">Total</span>\
+        <span class="myRightPrice cartTotal">$'+tempt.toFixed(2)+'</span>\
+      <div>\
+  ');
+  return r;
+}
+
+function showCart() {
+    $('.pageTitle').text("Cart");
+    $(".threeFour").empty();
+    let c = makeCart();
+    $(".threeFour").append(c);
+
+}
+
+function hideCart() {
+
+}
+
+function updateCartCount() {
+  var cnt = 0;
+  for (c in cart) {
+    cnt+=cart[c]
+  }
+  $('.cartCounter').text(cnt);
 }

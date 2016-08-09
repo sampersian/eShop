@@ -318,6 +318,15 @@ function searchForSomething(sVal) {
       let k = false;
       let b = false;
       let s = false;
+      let c = false;
+      let cmatches = [];
+
+      for (cat of categories) {
+        if (cat.toLowerCase().indexOf(getRidOfSpaces(searchValue).toLowerCase()) !== -1) {
+          c = true;
+          cmatches.push(cat)
+        }
+      }
       for (brand of brands) {
         if (getRidOfUnderscores(brand).toLowerCase() == searchValue.toLowerCase()) {
           b = brand;
@@ -331,7 +340,7 @@ function searchForSomething(sVal) {
       if (inventoryBySKU[searchValue]) {
         s = searchValue;
       }
-      if (b !== false || k !== false || s !== false) {
+      if (b !== false || k !== false || s !== false || c !== false) {
         changeTitleAndEmpty("All Results");
         if (b !== false) {
           showAllOfBrand(b);
@@ -341,6 +350,11 @@ function searchForSomething(sVal) {
         }
         if (s !== false) {
           showSKU(s);
+        }
+        if (c !== false) {
+          for (match of cmatches) {
+            showCategory(match);
+          }
         }
       } else {
         console.error("Nothing was found matching the term '"+searchValue+"'.")

@@ -4,13 +4,13 @@ $.get("https://galvanize-cors-proxy.herokuapp.com/https://jsonhost-d6ae1.firebas
   .then((data) => {
     products = data;
     setUpInventory();
-    //getFeaturedItems();
+    getFeaturedItems();
     addNavCategories();
     $(".jumbotron").show();
     $("#enterStore").click(function() {
       $(".jumbotron").hide();
-      $("main").show();
-      //$(".myMain2").css('display', 'flex');
+      //$("main").show();
+      $(".myMain2").css('display', 'flex');
     })
     $('.navCat').click(function() {
       $(".threeFour").empty();
@@ -19,39 +19,39 @@ $.get("https://galvanize-cors-proxy.herokuapp.com/https://jsonhost-d6ae1.firebas
     $('.navbar-form').submit(function(event) {
       event.preventDefault();
       $(".jumbotron").hide();
-      $("main").show();
-      //$(".myMain2").css('display', 'flex');
+      //$("main").show();
+      $(".myMain2").css('display', 'flex');
       searchForSomething($(".myInput").val());
       $(".myInput").val('');
     })
     $('.searchButton2').click(function() {
       $(".jumbotron").hide();
-      $("main").show();
-      //$(".myMain2").css('display', 'flex');
+      //$("main").show();
+      $(".myMain2").css('display', 'flex');
       searchForSomething($(".myInput2").val());
       $(".myInput").val('');
     })
     $('.cartLink').click(function() {
       $(".jumbotron").hide();
-      $("main").show();
-      //$(".myMain2").css('display', 'flex');
+      //$("main").show();
+      $(".myMain2").css('display', 'flex');
       console.log("trying")
-      showCart();
-      //showCart2();
+      //showCart();
+      showCart2();
     })
     $('.goHome').click(function() {
-      $("main").hide();
+      //$("main").hide();
       $(".jumbotron").show();
-      //$(".myMain2").hide();
+      $(".myMain2").hide();
     })
-    // $('.inventoryFilterSelector').change(function() {
-    //   $('.mainGallery').empty();
-    //   if ($(this).val() === "Featured") {
-    //     showFeaturedItems();
-    //   } else {
-    //     showCategory2(getRidOfSpaces($(this).val()));
-    //   }
-    // })
+    $('.inventoryFilterSelector').change(function() {
+      $('.mainGallery').empty();
+      if ($(this).val() === "Featured") {
+        showFeaturedItems();
+      } else {
+        showCategory2(getRidOfSpaces($(this).val()));
+      }
+    })
   })
 
 skus = [];
@@ -158,35 +158,35 @@ function makeItemObject(sku) {
     return itemObject;
 }
 
-// function makeItemObject2(sku) {
-//     item = inventoryBySKU[sku];
-//     itemObject = $('<div class="card myCard2">\
-//         <div class="cardPhotoHolder">\
-//           <img class="card-img-top cardPhoto" src="'+item.ImgUrl+'" alt="Card image cap" width="200px">\
-//         </div>\
-//         <div class="card-block cardBlock" id="cardBlock'+item.SKU+'">\
-//           <div>\
-//             <div class="myLeftLogo">\
-//               <img class="cardLogo" src="logos/'+item.Brand+'.png" alt="Card image cap" height="40px" width="40px">\
-//             </div>\
-//             <div class="myRightTitle">\
-//               <h6 class="card-title itemTitle">'+item.Type+' '+getRidOfUnderscores(item.Kind)+'</h6>\
-//             </div>\
-//           </div>\
-//           <p class="card-text itemPrice">'+item.Price+'</p>\
-//           <div class="adderSection">\
-//             <input type="number" class="form-control nToAdd" id="nToAddof'+item.SKU+'" value="1">\
-//             <button type="button" class="btn btn-primary form-control itemAdder" id="itemAddBtn'+item.SKU+'" onclick="confirmAdd('+item.SKU+')">Add to Cart</button>\
-//           </div>\
-//         </div>\
-//       </div>');
-//     return itemObject;
-// }
+function makeItemObject2(sku) {
+    item = inventoryBySKU[sku];
+    itemObject = $('<div class="card myCard2">\
+        <div class="cardPhotoHolder">\
+          <img class="card-img-top cardPhoto" src="'+item.ImgUrl+'" alt="Card image cap" width="200px">\
+        </div>\
+        <div class="card-block cardBlock" id="cardBlock'+item.SKU+'">\
+          <div>\
+            <div class="myLeftLogo">\
+              <img class="cardLogo" src="logos/'+item.Brand+'.png" alt="Card image cap" height="40px" width="40px">\
+            </div>\
+            <div class="myRightTitle">\
+              <h6 class="card-title itemTitle">'+item.Type+' '+getRidOfUnderscores(item.Kind)+'</h6>\
+            </div>\
+          </div>\
+          <p class="card-text itemPrice">'+item.Price+'</p>\
+          <div class="adderSection">\
+            <input type="number" class="form-control nToAdd" id="nToAddof'+item.SKU+'" value="1">\
+            <button type="button" class="btn btn-primary form-control itemAdder" id="itemAddBtn'+item.SKU+'" onclick="confirmAdd('+item.SKU+')">Add to Cart</button>\
+          </div>\
+        </div>\
+      </div>');
+    return itemObject;
+}
 
 function replaceItemGuts(sku) {
     let item = inventoryBySKU[sku];
     console.log(item)
-    itemObject = $('<div class="row">\
+    itemObject = $('<div>\
             <div class="myLeftLogo">\
               <img class="cardLogo" src="logos/'+item.Brand+'.png" alt="Card image cap" height="40px" width="40px">\
             </div>\
@@ -208,32 +208,32 @@ function addNavCategories() {
   for (let c in categories.sort()) {
     let newobj = $('<li class="nav-item navCat"><img src="'+categoryImages[categories[c]]+'" class="catImage">'+getRidOfUnderscores(categories[c])+'</li>');
     $('.catSelector').append(newobj);
-    // let newobj2 = $('<option value="'+getRidOfUnderscores(categories[c])+'" class="inventoryFilter">'+getRidOfUnderscores(categories[c])+'</option>');
-    // $('.inventoryFilterSelector').append(newobj2);
+    let newobj2 = $('<option value="'+getRidOfUnderscores(categories[c])+'" class="inventoryFilter">'+getRidOfUnderscores(categories[c])+'</option>');
+    $('.inventoryFilterSelector').append(newobj2);
   }
 }
 
-// function getFeaturedItems() {
-//   $('.mainGallery').empty();
-//   for (i = 0; i < 4; i++) {
-//     let randy = Math.random();
-//     let indyOfRandy = ((skus.length)*randy).toFixed(0);
-//     let randySKU = skus[indyOfRandy];
-//     if (featuredItems[randySKU] === undefined) {
-//       featuredItems[randySKU] = inventoryBySKU[randySKU];
-//     } else {
-//       i--;
-//     }
-//   }
-//   showFeaturedItems();
-// }
+function getFeaturedItems() {
+  $('.mainGallery').empty();
+  for (i = 0; i < 4; i++) {
+    let randy = Math.random();
+    let indyOfRandy = ((skus.length)*randy).toFixed(0);
+    let randySKU = skus[indyOfRandy];
+    if (featuredItems[randySKU] === undefined) {
+      featuredItems[randySKU] = inventoryBySKU[randySKU];
+    } else {
+      i--;
+    }
+  }
+  showFeaturedItems();
+}
 
-// function showFeaturedItems() {
-//   for (i in featuredItems) {
-//     let itemObject = makeItemObject2(i);
-//     $('.mainGallery').append(itemObject);
-//   }
-// }
+function showFeaturedItems() {
+  for (i in featuredItems) {
+    let itemObject = makeItemObject2(i);
+    $('.mainGallery').append(itemObject);
+  }
+}
 
 function showCategory(cat) {
   let theWholeCategory = inventoryByCategory[cat];
@@ -244,14 +244,14 @@ function showCategory(cat) {
   $(".pageTitle").text(getRidOfUnderscores(cat));
 }
 
-// function showCategory2(cat) {
-//   let theWholeCategory = inventoryByCategory[cat];
-//   for (let c of theWholeCategory) {
-//     let obj = makeItemObject(c.SKU);
-//     $(".mainGallery").append(obj);
-//   }
-//   //$(".pageTitle").text(getRidOfUnderscores(cat));
-// }
+function showCategory2(cat) {
+  let theWholeCategory = inventoryByCategory[cat];
+  for (let c of theWholeCategory) {
+    let obj = makeItemObject(c.SKU);
+    $(".mainGallery").append(obj);
+  }
+  //$(".pageTitle").text(getRidOfUnderscores(cat));
+}
 
 function changeTitleAndEmpty(str) {
   $('.pageTitle').text(str);
@@ -497,11 +497,11 @@ function showCart() {
     let c = makeCart();
     $(".threeFour").append(c);
 }
-// function showCart2() {
-//     $(".mainGallery").empty();
-//     let c = makeCart();
-//     $(".mainGallery").append(c);
-// }
+function showCart2() {
+    $(".mainGallery").empty();
+    let c = makeCart();
+    $(".mainGallery").append(c);
+}
 
 function hideCart() {
 

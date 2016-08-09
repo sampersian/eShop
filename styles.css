@@ -69,6 +69,7 @@ main {
   flex-direction: column;
   align-items: center;
   margin-top: 50px;
+  padding-top: 20px;
 }
 
 .myMain2 .inventoryFilterBox {
@@ -92,8 +93,8 @@ main {
 }
 
 .myMain2 .inventoryFilterBox .inventoryFilterBoxRight .inventoryFilterSelector {
-  width: 50%;
-  min-width: 200px;
+  width: 25%;
+  min-width: 150px;
 }
 
 .myMain2 .inventoryFilterBox .inventoryFilterBoxRight .inventoryFilterSelector .inventoryFilterCategory{

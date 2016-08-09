@@ -433,6 +433,7 @@ function processOrder() {
   cart = {};
   updateCartCount();
   $('.threeFour').empty();
+  showCart();
 }
 
 function makeItemInCart(sku, n) {

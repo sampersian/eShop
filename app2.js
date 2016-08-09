@@ -11,6 +11,8 @@ $.get("https://galvanize-cors-proxy.herokuapp.com/https://jsonhost-d6ae1.firebas
       $(".jumbotron").hide();
       //$("main").show();
       $(".myMain2").css('display', 'flex');
+      $(".myMain2").show();
+
     })
     $('.navCat').click(function() {
       $(".threeFour").empty();
@@ -464,14 +466,14 @@ function oneLess(sku) {
   }
   console.log(cart[s]);
   updateCartCount();
-  showCart();
+  showCart2();
 }
 
 function oneMore(sku) {
   console.log("Adding one of ",sku," to the cart.")
   cart[sku] += 1;
   updateCartCount();
-  showCart();
+  showCart2();
 }
 
 function makeCartTotals() {

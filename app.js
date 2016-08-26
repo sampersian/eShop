@@ -1,6 +1,6 @@
 var products = {};
 var cart = {};
-$.get("https://galvanize-cors-proxy.herokuapp.com/https://jsonhost-d6ae1.firebaseapp.com/hockeystore.json")
+$.get("https://jsonhost-d6ae1.firebaseapp.com/hockeystore.json")
   .then((data) => {
     products = data;
     setUpInventory();
